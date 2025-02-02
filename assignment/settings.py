@@ -144,5 +144,5 @@ EMAIL_HOST = 'smtp.gmail.com'  # For Gmail
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'mazenbanna15@gmail.com'
-EMAIL_HOST_PASSWORD = 'vrtc afic ddbs muzl'
+EMAIL_HOST_PASSWORD = ''
 DEFAULT_FROM_EMAIL = 'testassignment00@gmail.com'
