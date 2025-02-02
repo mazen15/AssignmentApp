@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Record - {{ table_name }}</title>
+    <style>
+        .form-container { width: 50%; margin: 20px auto; }
+        .form-container input, .form-container button { width: 100%; padding: 10px; margin: 5px 0; }
+        .form-container button { background-color: #007bff; color: white; border: none; cursor: pointer; }
+        .form-container button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+
+<h2>Create New Record in {{ table_name|title }}</h2>
+
+{% if error %}
+    <p style="color: red;">{{ error }}</p>
+{% endif %}
+
+<form method="POST" class="form-container">
+    {% csrf_token %}
+    {% for field in fields %}
+    {% if field == "id" %}
+    {%else%}
+        <label for="{{ field }}">{{ field|title }}</label>
+        <input type="text" id="{{ field }}" name="{{ field }}" required>
+    {%endif%}
+    {% endfor %}
+    <button type="submit">Create</button>
+</form>
+
+</body>
+</html>

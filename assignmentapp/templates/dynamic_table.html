@@ -1,0 +1,90 @@
+{% load static %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ table_name|title }} - Dynamic Table</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>{{ table_name|title }} Table</h1>
+
+        <!-- Search form -->
+        <div class="search-form">
+            <form method="GET">
+                <input type="text" name="search" placeholder="Search..." value="{{ search }}">
+                <button type="submit" class="search-btn">Search</button>
+            </form>
+        </div>
+
+        <!-- Create Button -->
+        <div class="create-btn">
+            <a href="{% url 'dynamic_table_create' table_name %}" class="btn">Create New Record</a>
+        </div>
+
+        <!-- Table -->
+        <table class="dynamic-table">
+            <thead>
+                <tr>
+                    {% for field in fields %}
+                        {% if sort_by == field %}
+                            {% if order == 'asc' %}
+                                <th>
+                                    <a href="?search={{ search }}&sort_by={{ field }}&order=desc">
+                                        {{ field|title }} ↓
+                                    </a>
+                                </th>
+                            {% else %}
+                                <th>
+                                    <a href="?search={{ search }}&sort_by={{ field }}&order=asc">
+                                        {{ field|title }} ↑
+                                    </a>
+                                </th>
+                            {% endif %}
+                        {% else %}
+                            <th>
+                                <a href="?search={{ search }}&sort_by={{ field }}&order=asc">
+                                    {{ field|title }}
+                                </a>
+                            </th>
+                        {% endif %}
+                    {% endfor %}
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                    <tr>
+                        {% for field in fields %}
+                            <td>{{ record|getattr:field }}</td>
+                        {% endfor %}
+                        <td>
+                            <a href="{% url 'dynamic_table_edit' table_name record.id %}" class="btn edit-btn">Edit</a>
+                            <a href="{% url 'dynamic_table_read' table_name record.id %}" class="btn read-btn" style=" background-color: #04620e;">Read</a>
+                            <a href="{% url 'dynamic_table_delete' table_name record.id %}" class="btn delete-btn">Delete</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="{{ fields|length|add:1 }}">No records found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            {% if records.has_previous %}
+                <a href="?page=1&search={{ search }}&sort_by={{ sort_by }}&order={{ order }}">First</a>
+                <a href="?page={{ records.previous_page_number }}&search={{ search }}&sort_by={{ sort_by }}&order={{ order }}">Prev</a>
+            {% endif %}
+            <span>Page {{ records.number }} of {{ records.paginator.num_pages }}</span>
+            {% if records.has_next %}
+                <a href="?page={{ records.next_page_number }}&search={{ search }}&sort_by={{ sort_by }}&order={{ order }}">Next</a>
+                <a href="?page={{ records.paginator.num_pages }}&search={{ search }}&sort_by={{ sort_by }}&order={{ order }}">Last</a>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
